@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Company.G01.BLL.Interfaces
 {
-    interface IDepartmentRepository
+    internal interface IDepartmentRepository
     {
+        IEnumerable<Department> GetAll();
     }
 }
