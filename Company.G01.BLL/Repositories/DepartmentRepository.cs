@@ -13,9 +13,9 @@ namespace Company.G01.BLL.Repositories
     {
         private readonly CompanyDBContext _context;
 
-        public DepartmentRepository()
+        public DepartmentRepository(CompanyDBContext companyDBContext)
         {
-            _context = new CompanyDBContext();
+            _context = companyDBContext;
         }
 
         public IEnumerable<Department> GetAll()

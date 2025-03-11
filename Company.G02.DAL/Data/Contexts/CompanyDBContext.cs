@@ -11,15 +11,15 @@ namespace Company.G02.DAL.Data.Contexts
 {
     public class CompanyDBContext : DbContext
     {
-        public CompanyDBContext() : base()
+        public CompanyDBContext(DbContextOptions<CompanyDBContext> options ) : base(options)
         {
             
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+/*        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=.;Database=CompanyDB;Trusted_Connection=True;TrustServerCertificate=True;");
 
-        }
+        }*/
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
