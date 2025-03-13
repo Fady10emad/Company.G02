@@ -13,7 +13,7 @@ namespace Company.G02.DAL.Models
 
         public string Name { get; set; }
 
-        public DateOnly CreatedeAt { get; set; }
+        public DateTime CreatedeAt { get; set; }
 
 
     }
