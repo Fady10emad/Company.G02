@@ -50,6 +50,19 @@ namespace Company.G02.PL.Controllers
             return RedirectToAction("Index"); 
         }
 
-
+        [HttpGet]
+        public IActionResult Details(int? id)
+        {
+            if (id is null)
+            {
+                return BadRequest("invalid id");
+            }
+            var department = _departmentRepository.Get(id.Value);
+            if (department is null)
+            {
+                return NotFound(new { statusCode =404 , message=$"Department with Id : {id} is not found" });
+            }
+            return View(department);
+        }
     }
 }
