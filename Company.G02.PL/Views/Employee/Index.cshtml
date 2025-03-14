@@ -1,0 +1,111 @@
+﻿@model IEnumerable<Employee>
+
+@{
+    ViewData["Title"] = "Employee List";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Employee List</h2>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Create Employee
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Salary</th>
+                        <th>Hiring Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in Model)
+                    {
+                        <tr>
+                            <td>@employee.Id</td>
+                            <td>@employee.Name</td>
+                            <td>@employee.Age</td>
+                            <td>@employee.Email</td>
+                            <td>@employee.Phone</td>
+                            <td>$@employee.Salary.ToString("N2")</td>
+                            <td>@employee.HiringDate.ToShortDateString()</td>
+                            <td>
+                                <span class="badge @(employee.IsActive ? "bg-success" : "bg-danger")">
+                                    @(employee.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-controller="Employee" asp-action="Details" asp-route-id="@employee.Id" class="btn btn-info btn-sm">
+                                    <i class="fas fa-trash"></i> Details
+                                </a>
+                                <a asp-controller="Employee" asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="@employee.Id" data-name="@employee.Name">Delete</button>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger text-center mt-5" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> There are no employees.
+        </div>
+    }
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong id="empName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let deleteButtons = document.querySelectorAll(".delete-btn");
+            let deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            let confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            let empName = document.getElementById('empName');
+
+            deleteButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    let empId = this.getAttribute("data-id");
+                    let name = this.getAttribute("data-name");
+
+                    empName.textContent = name;
+                    confirmDeleteBtn.href = "/Employee/Delete/" + empId;
+                    deleteModal.show();
+                });
+            });
+        });
+    </script>
+}
