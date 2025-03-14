@@ -32,6 +32,7 @@ namespace Company.G02.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(DepartmentDots dept)
         {
             if (!ModelState.IsValid)
@@ -64,5 +65,94 @@ namespace Company.G02.PL.Controllers
             }
             return View(department);
         }
+
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id is null) return BadRequest("invalid id");
+
+
+            var department = _departmentRepository.Get(id.Value);
+            return View(department);
+
+        }
+
+        //[HttpPost]
+        //public IActionResult Edit([FromRoute]int id,Department dept)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if(id!=dept.Id) return BadRequest();
+        //        int res = _departmentRepository.Update(dept);
+        //        if (res > 0)
+        //        {
+        //            return RedirectToAction("Index");
+        //        }
+        //    }
+
+        //    return View(dept);
+
+        //}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit([FromRoute] int id, DepartmentDots dept)
+        {
+            if (ModelState.IsValid)
+            {
+                var department = new Department()
+                {
+                    Id = id,
+                    Code = dept.Code,
+                    Name = dept.Name,
+                    CreatedeAt = dept.CreatedeAt
+                };
+                int res = _departmentRepository.Update(department);
+                if (res > 0)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return View(dept);
+
+        }
+
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id is null) return BadRequest("invalid id");
+
+
+            var department = _departmentRepository.Get(id.Value);
+            var dept = new DepartmentDots()
+            {
+                Code = department.Code,
+                Name = department.Name,
+                CreatedeAt = department.CreatedeAt
+            };
+            return View(dept);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete([FromRoute]int id,DepartmentDots dept)
+        {
+            
+                var department = new Department()
+                {
+                    Id = id,
+                    Code = dept.Code,
+                    Name = dept.Name,
+                    CreatedeAt = dept.CreatedeAt
+                };
+            int res = _departmentRepository.Delete(department);
+            if(res>=0) return RedirectToAction("Index");
+            return View(dept);
+
+        }
+
     }
 }
