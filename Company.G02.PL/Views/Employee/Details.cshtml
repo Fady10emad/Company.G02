@@ -1,0 +1,30 @@
+﻿@model Employee
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<h1 class="mb-4 text-primary">Employee Details</h1>
+
+<div class="card shadow-lg p-4">
+    <div class="card-body">
+        <h5 class="card-title text-center text-uppercase fw-bold">@Model.Name</h5>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Age:</strong> @Model.Age</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Phone:</strong> @Model.Phone</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Address:</strong> @Model.Address</p>
+                <p><strong>Salary:</strong> $@Model.Salary</p>
+                <p><strong>Hiring Date:</strong> @Model.HiringDate.ToString("dd MMM yyyy")</p>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
