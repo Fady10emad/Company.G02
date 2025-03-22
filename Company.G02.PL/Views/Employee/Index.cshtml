@@ -8,6 +8,20 @@
     <h2 class="text-center mb-4">Employee List</h2>
 
     <div class="d-flex justify-content-between mb-3">
+        
+
+        <form asp-action="Index" asp-controller="Employee">
+            <div class="d-flex g-3">
+                <input type="text" name="name" id="search" placeholder="Search By Name" class="form-control me-3" />
+                 <button type="submit" class="btn btn-info"> Search </button>
+
+
+            </div>
+
+
+        </form>
+
+
         <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Create Employee
         </a>
@@ -25,6 +39,7 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Salary</th>
+                        <th>Department</th>
                         <th>Hiring Date</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -40,6 +55,7 @@
                             <td>@employee.Email</td>
                             <td>@employee.Phone</td>
                             <td>$@employee.Salary.ToString("N2")</td>
+                            <td>@(employee.Department?.Name ?? "NO Departments")</td>
                             <td>@employee.HiringDate.ToShortDateString()</td>
                             <td>
                                 <span class="badge @(employee.IsActive ? "bg-success" : "bg-danger")">
@@ -107,5 +123,9 @@
                 });
             });
         });
+
+        
+
+
     </script>
 }

@@ -21,6 +21,9 @@ namespace Company.G02.PL.Controllers
 
             var departments = _departmentRepository.GetAll();
 
+            //ViewData["messsage"] = "Hello from Details view data";
+            ViewBag.Message = "Hello from Details view Bag";
+
             return View(departments);
         }
 
@@ -48,12 +51,18 @@ namespace Company.G02.PL.Controllers
             };
 
             _departmentRepository.Add(department);
+
+
+            TempData["Message"] = "Department added successfully";
+
+
             return RedirectToAction("Index"); 
         }
 
         [HttpGet]
         public IActionResult Details(int? id)
         {
+
             if (id is null)
             {
                 return BadRequest("invalid id");

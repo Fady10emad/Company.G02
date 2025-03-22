@@ -1,4 +1,5 @@
-﻿using Company.G01.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.G01.BLL.Interfaces;
 using Company.G01.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dots;
@@ -9,21 +10,37 @@ namespace Company.G02.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
+            _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? name)
         {
-           var emps = _employeeRepository.GetAll();
-            return View(emps);
+            if (string.IsNullOrEmpty(name))
+            {
+                var emps = _employeeRepository.GetAll();
+                return View(emps);
+
+            }
+            else
+            {
+            var emps2 = _employeeRepository.GetByName(name);
+            return View(emps2);
+            }
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            var depts = _departmentRepository.GetAll();
+            ViewBag.Departments = depts;
+
             return View();
         }
 
@@ -36,19 +53,22 @@ namespace Company.G02.PL.Controllers
             }
 
 
-            var emp = new Employee()
-            {
-                Name = model.Name,
-                Age = model.Age,
-                Email = model.Email,
-                Address = model.Address,
-                Phone = model.Phone,
-                Salary = model.Salary,
-                IsActive = model.IsActive,
-                IsDeleted = model.IsDeleted,
-                HiringDate = model.HiringDate,
-                CreatedAt = model.CreatedAt
-            };
+            //var emp = new Employee()
+            //{
+            //    Name = model.Name,
+            //    Age = model.Age,
+            //    Email = model.Email,
+            //    Address = model.Address,
+            //    Phone = model.Phone,
+            //    Salary = model.Salary,
+            //    IsActive = model.IsActive,
+            //    IsDeleted = model.IsDeleted,
+            //    HiringDate = model.HiringDate,
+            //    CreatedAt = model.CreatedAt,
+            //    DepartmentId = model.DepartmentId
+
+            //};
+           var emp = _mapper.Map<Employee>(model);
            var res = _employeeRepository.Add(emp);
             return RedirectToAction("Index");
         }
@@ -71,7 +91,10 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit([FromRoute] int id)
         {
-           var emp = _employeeRepository.Get(id);
+            var depts = _departmentRepository.GetAll();
+            ViewBag.Departments = depts;
+
+            var emp = _employeeRepository.Get(id);
 
             EmployeeDto model = new EmployeeDto()
             {
@@ -110,6 +133,7 @@ namespace Company.G02.PL.Controllers
                     Email = employee.Email,
                     HiringDate = employee.HiringDate,
                     IsDeleted = employee.IsDeleted,
+                    DepartmentId = employee.DepartmentId
 
                 };
               int res = _employeeRepository.Update(emp);

@@ -16,6 +16,7 @@
                 <p><strong>Phone:</strong> @Model.Phone</p>
             </div>
             <div class="col-md-6">
+                <p><strong>Department:</strong> @(Model.Department?.Name ?? "No Department")</p>
                 <p><strong>Address:</strong> @Model.Address</p>
                 <p><strong>Salary:</strong> $@Model.Salary</p>
                 <p><strong>Hiring Date:</strong> @Model.HiringDate.ToString("dd MMM yyyy")</p>

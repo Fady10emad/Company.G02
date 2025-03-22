@@ -1,6 +1,7 @@
 using Company.G01.BLL.Interfaces;
 using Company.G01.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.PL.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.G02.PL
@@ -19,6 +20,8 @@ namespace Company.G02.PL
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddAutoMapper(m=>m.AddProfile(new EmployeeProfile()));
 
             var app = builder.Build();
 

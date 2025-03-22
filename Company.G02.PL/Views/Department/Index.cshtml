@@ -5,6 +5,24 @@
 
 <h1 class="text-center">All Departments</h1>
 
+
+@*  <div class="alert alert-danger"> *@
+@*     @ViewData["Message"] *@
+@* </div>  *@
+
+
+@* <div class="alert alert-danger"> *@
+@* 	@ViewBag.Message *@
+@* </div> *@
+
+
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
 <a asp-action="Create" asp-controller="Department" class="btn btn-primary mb-3">Create Department</a>
 
 @if (Model != null && Model.Any())
