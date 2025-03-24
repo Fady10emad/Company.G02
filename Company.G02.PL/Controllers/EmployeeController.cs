@@ -3,53 +3,67 @@ using Company.G01.BLL.Interfaces;
 using Company.G01.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dots;
+using Company.G02.PL.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Company.G02.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IunitOfWork _unitOfWork;
+
+        //private readonly IEmployeeRepository _employeeRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository, IMapper mapper)
+        public EmployeeController(
+            //IEmployeeRepository employeeRepository,
+            //IDepartmentRepository departmentRepository,
+            IunitOfWork unitOfWork,
+            IMapper mapper)
         {
-            _employeeRepository = employeeRepository;
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
+            //_employeeRepository = employeeRepository;
+            //_departmentRepository = departmentRepository;
             _mapper = mapper;
         }
 
-        public IActionResult Index(string? name)
+        public async Task<IActionResult> Index(string? name)
         {
             if (string.IsNullOrEmpty(name))
             {
-                var emps = _employeeRepository.GetAll();
+                var emps = await _unitOfWork.EmployeeRepository.GetAllAsync();
                 return View(emps);
 
             }
             else
             {
-            var emps2 = _employeeRepository.GetByName(name);
+            var emps2 = await _unitOfWork.EmployeeRepository.GetByNameAsync(name);
             return View(emps2);
             }
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var depts = _departmentRepository.GetAll();
+            var depts = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewBag.Departments = depts;
 
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeeDto model)
+        public async Task<IActionResult> Create(EmployeeDto model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            if(model.Image is not null)
+            {
+              model.ImageName = DocumentSettings.UploadFile(model.Image, "images");
             }
 
 
@@ -68,18 +82,19 @@ namespace Company.G02.PL.Controllers
             //    DepartmentId = model.DepartmentId
 
             //};
-           var emp = _mapper.Map<Employee>(model);
-           var res = _employeeRepository.Add(emp);
+            var emp = _mapper.Map<Employee>(model);
+           await  _unitOfWork.EmployeeRepository.AddAsync(emp);
+            var res =await _unitOfWork.CompleteAsync();
             return RedirectToAction("Index");
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id is null)
             {
                 return BadRequest("invalid id");
             }
-            var Emp = _employeeRepository.Get(id.Value);
+            var Emp = await _unitOfWork.EmployeeRepository.GetAsync(id.Value);
             if (Emp is null)
             {
                 return NotFound(new { statusCode = 404, message = $"Department with Id : {id} is not found" });
@@ -89,26 +104,28 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Edit([FromRoute] int id)
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            var depts = _departmentRepository.GetAll();
+            var depts = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewBag.Departments = depts;
 
-            var emp = _employeeRepository.Get(id);
+            var emp = await _unitOfWork.EmployeeRepository.GetAsync(id);
 
-            EmployeeDto model = new EmployeeDto()
-            {
-                Name=emp.Name,
-                Age = emp.Age,
-                Email = emp.Email,
-                CreatedAt = emp.CreatedAt,
-                HiringDate = emp.HiringDate,
-                IsActive = emp.IsActive,
-                IsDeleted = emp.IsDeleted,
-                Phone = emp.Phone,
-                Salary=emp.Salary,
-                Address = emp.Address
-            };
+            //EmployeeDto model = new EmployeeDto()
+            //{
+            //    Name=emp.Name,
+            //    Age = emp.Age,
+            //    Email = emp.Email,
+            //    CreatedAt = emp.CreatedAt,
+            //    HiringDate = emp.HiringDate,
+            //    IsActive = emp.IsActive,
+            //    IsDeleted = emp.IsDeleted,
+            //    Phone = emp.Phone,
+            //    Salary=emp.Salary,
+            //    Address = emp.Address
+            //};
+
+           var model = _mapper.Map<EmployeeDto>(emp);
 
 
             return View(model);
@@ -116,27 +133,41 @@ namespace Company.G02.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit([FromRoute] int id,EmployeeDto employee)
+        public async Task<IActionResult> Edit([FromRoute] int id,EmployeeDto employee)
         {
             if (ModelState.IsValid)
             {
-                var emp = new Employee()
-                {
-                    Id = id,
-                    Name = employee.Name,
-                    Age = employee.Age,
-                    Address = employee.Address,
-                    Phone = employee.Phone,
-                    Salary = employee.Salary,
-                    IsActive = employee.IsActive,
-                    CreatedAt = employee.CreatedAt,
-                    Email = employee.Email,
-                    HiringDate = employee.HiringDate,
-                    IsDeleted = employee.IsDeleted,
-                    DepartmentId = employee.DepartmentId
+                //var emp = new Employee()
+                //{
+                //    Id = id,
+                //    Name = employee.Name,
+                //    Age = employee.Age,
+                //    Address = employee.Address,
+                //    Phone = employee.Phone,
+                //    Salary = employee.Salary,
+                //    IsActive = employee.IsActive,
+                //    CreatedAt = employee.CreatedAt,
+                //    Email = employee.Email,
+                //    HiringDate = employee.HiringDate,
+                //    IsDeleted = employee.IsDeleted,
+                //    DepartmentId = employee.DepartmentId
 
-                };
-              int res = _employeeRepository.Update(emp);
+                //};
+
+
+                if(employee.ImageName is not null && employee.Image is not null)
+                {
+                    DocumentSettings.DeleteFile(employee.ImageName, "images");
+                }
+                if (employee.Image is not null)
+                {
+                   employee.ImageName = DocumentSettings.UploadFile(employee.Image, "images");
+                }
+
+               var emp = _mapper.Map<Employee>(employee);
+
+              _unitOfWork.EmployeeRepository.Update(emp);
+                int res = await _unitOfWork.CompleteAsync();
                 if (res == 0) return View(employee);
                 return RedirectToAction("Index");
             }
@@ -145,12 +176,13 @@ namespace Company.G02.PL.Controllers
         }
 
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var emp = _employeeRepository.Get(id);
+            var emp = await _unitOfWork.EmployeeRepository.GetAsync(id);
             if (emp != null)
             {
-                _employeeRepository.Delete(emp);
+                _unitOfWork.EmployeeRepository.Delete(emp);
+               await _unitOfWork.CompleteAsync();
             }
             return RedirectToAction("Index");
         }

@@ -9,6 +9,7 @@ namespace Company.G02.PL.Mapping
         public EmployeeProfile()
         {
             CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<Department, DepartmentDots>().ReverseMap();
         }
     }
 }

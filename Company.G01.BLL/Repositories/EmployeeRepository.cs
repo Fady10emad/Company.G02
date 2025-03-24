@@ -19,9 +19,9 @@ namespace Company.G01.BLL.Repositories
             this.context = context;
         }
 
-        public List<Employee> GetByName(string name)
+        public async Task<List<Employee>> GetByNameAsync(string name)
         {
-            return context.Employees.Include(e=>e.Department).Where(e => e.Name.ToLower().Contains(name.ToLower())).ToList();
+            return await context.Employees.Include(e=>e.Department).Where(e => e.Name.ToLower().Contains(name.ToLower())).ToListAsync();
         }
 
         //private readonly CompanyDBContext _context;

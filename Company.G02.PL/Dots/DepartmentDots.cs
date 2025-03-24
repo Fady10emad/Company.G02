@@ -4,6 +4,8 @@ namespace Company.G02.PL.Dots
 {
     public class DepartmentDots
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Code is required.")]
         public string Code { get; set; }
 

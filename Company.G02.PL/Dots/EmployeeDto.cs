@@ -5,6 +5,8 @@ namespace Company.G02.PL.Dots
 {
     public class EmployeeDto
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Name is required")]
         [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
         public string Name { get; set; }
@@ -40,5 +42,9 @@ namespace Company.G02.PL.Dots
 
 
         public int? DepartmentId { get; set; }
+
+
+        public string? ImageName { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

@@ -34,6 +34,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
+                        <th>image</th>
                         <th>Name</th>
                         <th>Age</th>
                         <th>Email</th>
@@ -50,6 +51,7 @@
                     {
                         <tr>
                             <td>@employee.Id</td>
+                            <td><img src="~/files/images/@employee.ImageName" class="img-fluid"/></td>
                             <td>@employee.Name</td>
                             <td>@employee.Age</td>
                             <td>@employee.Email</td>
