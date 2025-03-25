@@ -1,4 +1,5 @@
 ﻿using Company.G02.DAL.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Company.G02.DAL.Data.Contexts
 {
-    public class CompanyDBContext : DbContext
+    public class CompanyDBContext : IdentityDbContext<AppUser>
     {
         public CompanyDBContext(DbContextOptions<CompanyDBContext> options ) : base(options)
         {
@@ -23,6 +24,8 @@ namespace Company.G02.DAL.Data.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            base.OnModelCreating(modelBuilder);
         }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }

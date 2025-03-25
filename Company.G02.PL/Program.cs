@@ -1,7 +1,9 @@
 using Company.G01.BLL.Interfaces;
 using Company.G01.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.DAL.Models;
 using Company.G02.PL.Mapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.G02.PL
@@ -17,12 +19,21 @@ namespace Company.G02.PL
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             builder.Services.AddScoped<IunitOfWork, UnitOfWork>();
+            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<CompanyDBContext>();
+
             builder.Services.AddDbContext<CompanyDBContext>(option =>
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             builder.Services.AddAutoMapper(m=>m.AddProfile(new EmployeeProfile()));
+
+            builder.Services.ConfigureApplicationCookie(Config =>
+            {
+                Config.LoginPath = "/Account/SignIn";
+            });
+
+
 
             var app = builder.Build();
 
@@ -39,7 +50,9 @@ namespace Company.G02.PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",
