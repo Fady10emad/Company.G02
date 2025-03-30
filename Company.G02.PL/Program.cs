@@ -19,7 +19,7 @@ namespace Company.G02.PL
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             builder.Services.AddScoped<IunitOfWork, UnitOfWork>();
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<CompanyDBContext>();
+            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<CompanyDBContext>().AddDefaultTokenProviders();
 
             builder.Services.AddDbContext<CompanyDBContext>(option =>
             {
