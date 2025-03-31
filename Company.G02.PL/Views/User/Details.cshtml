@@ -1,0 +1,74 @@
+﻿@model UserToReturnDto
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>User Details</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">Username</dt>
+            <dd class="col-sm-9">@Model.UserName</dd>
+
+            <dt class="col-sm-3">First Name</dt>
+            <dd class="col-sm-9">@Model.FirstName</dd>
+
+            <dt class="col-sm-3">Last Name</dt>
+            <dd class="col-sm-9">@Model.LastName</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Roles</dt>
+            <dd class="col-sm-9">
+                @if (Model.Roles != null && Model.Roles.Any())
+                {
+                    @string.Join(", ", Model.Roles)
+                }
+                else
+                {
+                    <span class="text-muted">No roles assigned</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+
+    <style>
+        .card {
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        dt {
+            font-weight: 500;
+        }
+
+        dd {
+            margin-bottom: 10px;
+        }
+    </style>
+
